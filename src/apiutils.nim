@@ -121,7 +121,7 @@ proc fetch*(url: Uri; api: Api; additional_headers: HttpHeaders = newHttpHeaders
     updateToken()
 
     let error = result.getError
-    if error in {invalidToken, forbidden, badToken}:
+    if error in {invalidToken, badToken}:
       echo "fetch error: ", result.getError
       release(token, invalid=true)
       raise rateLimitError()
@@ -136,7 +136,7 @@ proc fetchRaw*(url: Uri; api: Api; additional_headers: HttpHeaders = newHttpHead
 
     if result.startsWith("{\"errors"):
       let errors = result.fromJson(Errors)
-      if errors in {invalidToken, forbidden, badToken}:
+      if errors in {invalidToken, badToken}:
         echo "fetch error: ", errors
         release(token, invalid=true)
         raise rateLimitError()
