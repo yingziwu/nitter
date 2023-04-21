@@ -18,8 +18,8 @@ proc genParams*(pars: openArray[(string, string)] = @[]; cursor="";
     result &= p
   if ext:
     result &= ("ext", "mediaStats")
-    result &= ("include_ext_alt_text", "true")
-    result &= ("include_ext_media_availability", "true")
+    result &= ("include_ext_alt_text", "1")
+    result &= ("include_ext_media_availability", "1")
   if count.len > 0:
     result &= ("count", count)
   if cursor.len > 0:
@@ -45,7 +45,7 @@ proc genHeaders*(token: Token = nil): HttpHeaders =
   })
 
 template updateToken() =
-  if api != Api.search and resp.headers.hasKey(rlRemaining):
+  if resp.headers.hasKey(rlRemaining):
     let
       remaining = parseInt(resp.headers[rlRemaining])
       reset = parseInt(resp.headers[rlReset])
@@ -71,17 +71,12 @@ template fetchImpl(result, additional_headers, fetchBody) {.dirty.} =
 
       getContent()
 
-      # Twitter randomly returns 401 errors with an empty body quite often.
-      # Retrying the request usually works.
-      if resp.status == "401 Unauthorized" and result.len == 0:
-        getContent()
-
     if resp.status == $Http429:
       raise rateLimitError()
 
-    if resp.status == $Http503:
-      badClient = true
-      raise newException(InternalError, result)
+      if resp.status == $Http503:
+        badClient = true
+        raise newException(BadClientError, "Bad client")
 
     if result.len > 0:
       if resp.headers.getOrDefault("content-encoding") == "gzip":
@@ -96,6 +91,9 @@ template fetchImpl(result, additional_headers, fetchBody) {.dirty.} =
     if resp.status == $Http400:
       raise newException(InternalError, $url)
   except InternalError as e:
+    raise e
+  except BadClientError as e:
+    release(token, used=true)
     raise e
   except Exception as e:
     echo "error: ", e.name, ", msg: ", e.msg, ", token: ", token[], ", url: ", url
@@ -121,7 +119,7 @@ proc fetch*(url: Uri; api: Api; additional_headers: HttpHeaders = newHttpHeaders
     updateToken()
 
     let error = result.getError
-    if error in {invalidToken, forbidden, badToken}:
+    if error in {invalidToken, badToken}:
       echo "fetch error: ", result.getError
       release(token, invalid=true)
       raise rateLimitError()
@@ -136,7 +134,7 @@ proc fetchRaw*(url: Uri; api: Api; additional_headers: HttpHeaders = newHttpHead
 
     if result.startsWith("{\"errors"):
       let errors = result.fromJson(Errors)
-      if errors in {invalidToken, forbidden, badToken}:
+      if errors in {invalidToken, badToken}:
         echo "fetch error: ", errors
         release(token, invalid=true)
         raise rateLimitError()
