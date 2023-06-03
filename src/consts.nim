@@ -26,6 +26,8 @@ const
   graphListBySlug* = graphql / "-kmqNvm5Y-cVrfvBy6docg/ListBySlug"
   graphListMembers* = graphql / "P4NpVZDqUD_7MEM84L-8nw/ListMembers"
   graphListTweets* = graphql / "jZntL0oVJSdjhmPcdbw_eA/ListLatestTweetsTimeline"
+  graphFavoriters* = graphql / "mDc_nU8xGv0cLRWtTaIEug/Favoriters"
+  graphRetweeters* = graphql / "RCR9gqwYD1NEgi9FWzA50A/Retweeters"
 
   timelineParams* = {
     "include_profile_interstitial_type": "0",
@@ -53,10 +55,12 @@ const
 
   gqlFeatures* = """{
   "blue_business_profile_image_shape_enabled": false,
+  "creator_subscriptions_tweet_preview_api_enabled": false,
   "freedom_of_speech_not_reach_fetch_enabled": false,
   "graphql_is_translatable_rweb_tweet_is_translatable_enabled": false,
   "interactive_text_enabled": false,
   "longform_notetweets_consumption_enabled": true,
+  "longform_notetweets_inline_media_enabled": false,
   "longform_notetweets_richtext_consumption_enabled": true,
   "longform_notetweets_rich_text_read_enabled": false,
   "responsive_web_edit_tweet_api_enabled": false,
@@ -66,6 +70,7 @@ const
   "responsive_web_graphql_timeline_navigation_enabled": false,
   "responsive_web_text_conversations_enabled": false,
   "responsive_web_twitter_blue_verified_badge_is_enabled": true,
+  "rweb_lists_timeline_redesign_enabled": false,
   "spaces_2022_h2_clipping": true,
   "spaces_2022_h2_spaces_communities": true,
   "standardized_nudges_misinfo": false,
@@ -117,4 +122,10 @@ const
   "withReactionsMetadata": false,
   "withReactionsPerspective": false,
   "withVoice": false
+}"""
+
+  reactorsVariables* = """{
+  "tweetId" : "$1", $2
+  "count" : 20,
+  "includePromotedContent": false
 }"""
