@@ -132,8 +132,9 @@ proc createTimelineRouter*(cfg: Config) =
         prefs = cookiePrefs()
         after = getCursor()
         names = getNames(@"name")
+        tab = @"tab"
 
-      case @"tab":
+      case tab:
         of "followers":
           resp renderMain(renderUserList(await getGraphFollowers(await getUserId(@"name"), getCursor()), prefs), request, cfg, prefs)
         of "following":
