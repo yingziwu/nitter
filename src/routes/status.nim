@@ -5,7 +5,7 @@ import jester, karax/vdom
 
 import router_utils
 import ".."/[types, formatters, api]
-import ../views/[general, status, timeline, search]
+import ../views/[general, status, search]
 
 export uri, sequtils, options, sugar
 export router_utils

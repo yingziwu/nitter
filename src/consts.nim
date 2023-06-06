@@ -28,6 +28,8 @@ const
   graphListTweets* = graphql / "jZntL0oVJSdjhmPcdbw_eA/ListLatestTweetsTimeline"
   graphFavoriters* = graphql / "mDc_nU8xGv0cLRWtTaIEug/Favoriters"
   graphRetweeters* = graphql / "RCR9gqwYD1NEgi9FWzA50A/Retweeters"
+  graphFollowers* = graphql / "EAqBhgcGr_qPOzhS4Q3scQ/Followers"
+  graphFollowing* = graphql / "JPZiqKjET7_M1r5Tlr8pyA/Following"
 
   timelineParams* = {
     "include_profile_interstitial_type": "0",
@@ -126,6 +128,12 @@ const
 
   reactorsVariables* = """{
   "tweetId" : "$1", $2
+  "count" : 20,
+  "includePromotedContent": false
+}"""
+
+  followVariables* = """{
+  "userId" : "$1", $2
   "count" : 20,
   "includePromotedContent": false
 }"""

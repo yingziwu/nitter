@@ -32,6 +32,8 @@ type
     userMedia
     favoriters
     retweeters
+    following
+    followers
 
   RateLimit* = object
     remaining*: int

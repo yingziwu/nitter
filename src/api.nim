@@ -3,7 +3,6 @@ import asyncdispatch, httpclient, uri, strutils, sequtils, sugar
 import packedjson
 import types, query, formatters, consts, apiutils, parser
 import experimental/parser as newParser
-import config
 
 proc getGraphUser*(username: string): Future[User] {.async.} =
   if username.len == 0: return
@@ -111,6 +110,24 @@ proc getGraphRetweeters*(id: string; after=""): Future[UsersTimeline] {.async.} 
     params = {"variables": variables, "features": gqlFeatures}
     js = await fetch(graphRetweeters ? params, Api.retweeters)
   result = parseGraphRetweetersTimeline(js, id)
+
+proc getGraphFollowing*(id: string; after=""): Future[UsersTimeline] {.async.} =
+  if id.len == 0: return
+  let
+    cursor = if after.len > 0: "\"cursor\":\"$1\"," % after else: ""
+    variables = followVariables % [id, cursor]
+    params = {"variables": variables, "features": gqlFeatures}
+    js = await fetch(graphFollowing ? params, Api.following)
+  result = parseGraphFollowTimeline(js, id)
+
+proc getGraphFollowers*(id: string; after=""): Future[UsersTimeline] {.async.} =
+  if id.len == 0: return
+  let
+    cursor = if after.len > 0: "\"cursor\":\"$1\"," % after else: ""
+    variables = followVariables % [id, cursor]
+    params = {"variables": variables, "features": gqlFeatures}
+    js = await fetch(graphFollowers ? params, Api.followers)
+  result = parseGraphFollowTimeline(js, id)
 
 proc getReplies*(id, after: string): Future[Result[Chain]] {.async.} =
   result = (await getGraphTweet(id, after)).replies
