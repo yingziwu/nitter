@@ -58,12 +58,14 @@ proc renderUserCard*(user: User; prefs: Prefs): VNode =
 
       tdiv(class="profile-card-extra-links"):
         ul(class="profile-statlist"):
-          renderStat(user.tweets, "posts", text="Tweets")
+          a(href="/" & user.username):
+            renderStat(user.tweets, "posts", text="Tweets")
           a(href="/" & user.username & "/following"):
             renderStat(user.following, "following")
           a(href="/" & user.username & "/followers"):
             renderStat(user.followers, "followers")
-          renderStat(user.likes, "likes")
+          a(href="/" & user.username & "/favorites"):
+            renderStat(user.likes, "likes")
 
 proc renderPhotoRail(profile: Profile): VNode =
   let count = insertSep($profile.user.media, ',')
